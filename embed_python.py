@@ -6,6 +6,6 @@ lib_pathdirectory = os.path.dirname(os.path.abspath("target/release/"+lib_filena
 #print("filename: <<"+ lib_pathdirectory + "/" + lib_filename);
 
 lib = cdll.LoadLibrary(lib_pathdirectory + "/" + lib_filename);
-lib.process();
+lib.toSeeIfPixelWorks();
 
 print("done!");
