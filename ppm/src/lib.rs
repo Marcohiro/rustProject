@@ -1,4 +1,6 @@
 use std::path::Path;
+use std::io::prelude::*;
+use std::io::BufWriter;
 use std::io::Write;
 use std::fs::File;
 
@@ -57,8 +59,8 @@ impl PartialEq for Pixel {
 
 //build an image
 struct Image {
-    points: Vec<Pixel>,
-    heigth:u32,
+    points: Vec<u8>,
+    height:u32,
     width:u32
 }
 
@@ -105,27 +107,30 @@ impl Image{
             None => false
         }
     }
- 
+    
     pub fn write_file(&self, filename: &str) -> std::io::Result<()> {
         let path = Path::new(filename);
-        let mut file = try!(File::create(&path));
+        let mut file = File::create(&path)?;
         let header = format!("P6 {} {} 255\n", self.width, self.height);
-        try!(file.write(header.as_bytes()));
-        try!(file.write(&self.points));
+        file.write(header.as_bytes())?;
+        file.write(&self.points)?;
         Ok(())
     }
+    
 }
 
 //externals methodes
 #[no_mangle]
 pub extern fn toSeeIfPixelWorks() {
     let mut p = Pixel::new(12, 78, 200);
-    println!("{}\n",p.display() );
+    println!("Pixel: {}\n",p.display() );
     let p2 =  Pixel::clone(&p);
-    println!("{}",p2.display());
+    println!("Pixel clone: {}\n",p2.display());
+    p.invert();
+    println!("Pixel inverser: {}\n",p.display());
 }
 
-#[no_mangle]
-fn new_with_file(filename: &Path) -> Image{
+// #[no_mangle]
+// fn new_with_file(filename: &Path) -> Image{
 
-}
+// }
