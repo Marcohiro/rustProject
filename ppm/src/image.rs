@@ -1,10 +1,7 @@
 pub mod image{
-    use std::io::Read;
     use std::fs::File;
     use std::path::Path;
     use std::io::Write;
-    use std::sync::mpsc;
-    use std::thread;
     use std::io::{BufReader};
     use std::io::BufRead;
 
@@ -15,19 +12,19 @@ pub mod image{
         pub pixels: Vec<pixel::Pixel>,
         pub height:u32,
         pub width:u32,
-        pub maxColorVal:u32
+        pub max_color_val:u32
     }
 
     impl Image{
  
         pub fn new_with_file(filename: &Path) -> Image{
             let file = File::open(filename).unwrap();
-            let bufReader = BufReader::new(file);
+            let buf_reader = BufReader::new(file);
             let mut h = 0;
             let mut w = 0;
             let mut m = 0;
-            let mut p: Vec<pixel::Pixel> = Vec::new();
-            for (index, line) in bufReader.lines().enumerate(){
+            let mut pixels: Vec<pixel::Pixel> = Vec::new();
+            for (index, line) in buf_reader.lines().enumerate(){
                 let line = line.unwrap();
                 if index == 0{
                     //On ignore la premiere ligne, on suppose toujours P3
@@ -49,34 +46,33 @@ pub mod image{
                     let g = list[1].parse().unwrap();
                     let b = list[2].parse().unwrap();
                     let pixel = pixel::Pixel::new(r, g, b);
-                    p.push(pixel);
+                    pixels.push(pixel);
                 }
             }           
 
             return Image{
                 height: h,
                 width: w,
-                maxColorVal: m,
-                pixels: p,
+                max_color_val: m,
+                pixels: pixels,
             };
         }
     
         pub fn save(&self, filename: &str) -> std::io::Result<()> {
-            let path = Path::new(filename);
             let mut file = File::create(filename)?;
             file.write("P3\n".as_bytes())?;
             file.write(self.height.to_string().as_bytes())?;
             file.write(" ".as_bytes())?;
             file.write(self.width.to_string().as_bytes())?;
             file.write("\n".as_bytes())?;
-            file.write(self.maxColorVal.to_string().as_bytes())?;
+            file.write(self.max_color_val.to_string().as_bytes())?;
             file.write("\n".as_bytes())?;
             for i in 0..self.pixels.len() {
-                file.write(self.pixels[i].getRed().to_string().as_bytes())?;
+                file.write(self.pixels[i].get_red().to_string().as_bytes())?;
                 file.write(" ".as_bytes())?;
-                file.write(self.pixels[i].getGreen().to_string().as_bytes())?;
+                file.write(self.pixels[i].get_green().to_string().as_bytes())?;
                 file.write(" ".as_bytes())?;
-                file.write(self.pixels[i].getBlue().to_string().as_bytes())?;
+                file.write(self.pixels[i].get_blue().to_string().as_bytes())?;
                 file.write("\n".as_bytes())?;
             }
             return Ok(());
@@ -84,7 +80,7 @@ pub mod image{
     }
 
     pub fn invert(image: Image) -> Image{
-        let max = image.maxColorVal;
+        let max = image.max_color_val;
         let w = image.width;
         let h = image.height;
         let mut pixels = image.pixels;
@@ -95,12 +91,12 @@ pub mod image{
             height: h,
             width: w,
             pixels: pixels,
-            maxColorVal: max,
+            max_color_val: max,
         };
     }
 
     pub fn grayscale(image: Image) -> Image{
-        let max = image.maxColorVal;
+        let max = image.max_color_val;
         let w = image.width;
         let h = image.height;
         let mut pixels = image.pixels;
@@ -111,7 +107,7 @@ pub mod image{
             height: h,
             width: w,
             pixels: pixels,
-            maxColorVal: max,
+            max_color_val: max,
         };
     }
 }
@@ -140,7 +136,7 @@ mod image_test{
 
         assert_eq!(image.height, 3);
         assert_eq!(image.width, 2);
-        assert_eq!(image.maxColorVal, 255);
+        assert_eq!(image.max_color_val, 255);
         assert_eq!(image.pixels.len(), pixels.len());
         for i in 0..image.pixels.len() {
             assert_eq!(image.pixels[i] == pixels[i], true);
@@ -168,7 +164,7 @@ mod image_test{
         let inv = image::invert(image);
         assert_eq!(inv.height, 3);
         assert_eq!(inv.width, 2);
-        assert_eq!(inv.maxColorVal, 255);
+        assert_eq!(inv.max_color_val, 255);
         assert_eq!(inv.pixels.len(), pixels.len());
         for i in 0..inv.pixels.len() {
             assert_eq!(inv.pixels[i] == pixels[i], true);
@@ -185,12 +181,11 @@ mod image_test{
         pixels.push(pixel::Pixel::new(150, 150, 150));
         pixels.push(pixel::Pixel::new(250, 250, 250));
         pixels.push(pixel::Pixel::new(0, 0, 0));
-
         let image = image::Image::new_with_file(Path::new("./test.ppm"));
         let gray = image::grayscale(image);
         assert_eq!(gray.height, 3);
         assert_eq!(gray.width, 2);
-        assert_eq!(gray.maxColorVal, 255);
+        assert_eq!(gray.max_color_val, 255);
         assert_eq!(gray.pixels.len(), pixels.len());
         for i in 0..gray.pixels.len() {
             assert_eq!(gray.pixels[i] == pixels[i], true);

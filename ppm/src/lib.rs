@@ -1,8 +1,3 @@
-use std::path::Path;
-use std::io::prelude::*;
-use std::io::BufWriter;
-use std::io::Write;
-use std::fs::File;
 
 pub mod pixel;
 pub mod image;

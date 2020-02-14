@@ -17,15 +17,15 @@ pub mod pixel {
             }    
         }
 
-        pub fn getRed(self) -> u8{
+        pub fn get_red(self) -> u8{
             return self.r;
         }
 
-        pub fn getGreen(self) -> u8{
+        pub fn get_green(self) -> u8{
             return self.g;
         }
 
-        pub fn getBlue(self) -> u8{
+        pub fn get_blue(self) -> u8{
             return self.b;
         }
 
@@ -60,12 +60,12 @@ pub mod pixel {
     }
 
     pub fn grayscale(pixel: Pixel) -> Pixel{
-        let value = ((pixel.getRed() as u32 + pixel.getGreen() as u32 + pixel.getBlue() as u32) / 3) as u8;
+        let value = ((pixel.get_red() as u32 + pixel.get_green() as u32 + pixel.get_blue() as u32) / 3) as u8;
         return Pixel::new(value, value, value);
     }
 
     impl PartialEq for Pixel {
-        fn eq(&self, other: &Self) -> bool {
+        fn eq(&self, _other: &Self) -> bool {
             return self.r == self.r && self.g == self.g && self.b == self.b;
         }
     }
@@ -78,51 +78,51 @@ mod pixel_tests {
 
     #[test]
     fn new_pixel(){
-        let p = pixel::Pixel::new(255, 255, 255);
-        assert_eq!(p.getRed(), 255);
-        assert_eq!(p.getGreen(), 255);
-        assert_eq!(p.getBlue(), 255);
+        let pixel = pixel::Pixel::new(255, 255, 255);
+        assert_eq!(pixel.get_red(), 255);
+        assert_eq!(pixel.get_green(), 255);
+        assert_eq!(pixel.get_blue(), 255);
     }
 
     #[test]
     fn pixel_display(){
-        let p = pixel::Pixel::new(255, 255, 255);
-        let x = p.display();
-        assert_eq!("255 255 255", x);
+        let pixel = pixel::Pixel::new(255, 255, 255);
+        let value = pixel.display();
+        assert_eq!("255 255 255", value);
     }
 
     #[test]
     fn pixel_invert(){
-        let mut p = pixel::Pixel::new(200, 100, 50);
-        p.invert();
-        assert_eq!(p.getRed(), 55);
-        assert_eq!(p.getGreen(), 155);
-        assert_eq!(p.getBlue(), 205);
+        let mut pixel = pixel::Pixel::new(200, 100, 50);
+        pixel.invert();
+        assert_eq!(pixel.get_red(), 55);
+        assert_eq!(pixel.get_green(), 155);
+        assert_eq!(pixel.get_blue(), 205);
     }
 
     #[test]
     fn pixel_partial_eq(){
-        let mut p1 = pixel::Pixel::new(255, 255, 255);
-        let p2 = pixel::Pixel::new(255, 255, 255);
-        assert_eq!(p1 == p2, true);
-        assert_eq!(p1 != p2, false);
+        let pixel1 = pixel::Pixel::new(255, 255, 255);
+        let pixel2 = pixel::Pixel::new(255, 255, 255);
+        assert_eq!(pixel1 == pixel2, true);
+        assert_eq!(pixel1 != pixel2, false);
     }
 
     #[test]
     fn pixel_clone(){
-        let p = pixel::Pixel::new(10, 50, 100);
-        let mut pc = p.clone();
-        assert_eq!(p == pc, true);
+        let pixel = pixel::Pixel::new(10, 50, 100);
+        let clone = pixel.clone();
+        assert_eq!(pixel == clone, true);
     }
 
     #[test]
     fn pixel_grayscale(){
-        let p = pixel::Pixel::new(200, 100, 30);
-        let gray = pixel::grayscale(p);
-        assert_eq!(gray.getGreen(), gray.getGreen());
-        assert_eq!(gray.getRed(), gray.getBlue());
-        assert_eq!(gray.getGreen(), gray.getBlue());
-        assert_eq!(gray.getRed(), 110);
+        let pixel = pixel::Pixel::new(200, 100, 30);
+        let gray_pixel = pixel::grayscale(pixel);
+        assert_eq!(gray_pixel.get_green(), gray_pixel.get_green());
+        assert_eq!(gray_pixel.get_red(), gray_pixel.get_blue());
+        assert_eq!(gray_pixel.get_green(), gray_pixel.get_blue());
+        assert_eq!(gray_pixel.get_red(), 110);
     }
 
 }
