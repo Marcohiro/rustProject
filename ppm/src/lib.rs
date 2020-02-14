@@ -4,17 +4,22 @@ use std::io::BufWriter;
 use std::io::Write;
 use std::fs::File;
 
+pub mod pixel;
+pub mod image;
 
-// //externals methodes
-// #[no_mangle]
-// pub extern fn toSeeIfPixelWorks() {
-//     let mut p = Pixel::new(12, 78, 200);
-//     println!("Pixel: {}\n",p.display() );
-//     let p2 =  Pixel::clone(&p);
-//     println!("Pixel clone: {}\n",p2.display());
-//     p.invert();
-//     println!("Pixel inverser: {}\n",p.display());
-// }
+pub use crate::pixel::pixel as pixel_mod;
+pub use crate::image::image as image_mod;
+
+//externals methodes
+#[no_mangle]
+pub extern fn toSeeIfPixelWorks() {
+    let mut p = pixel_mod::Pixel::new(12, 78, 200);
+    println!("Pixel: {}\n",p.display() );
+    let p2 =  pixel_mod::Pixel::clone(&p);
+    println!("Pixel clone: {}\n",p2.display());
+    p.invert();
+    println!("Pixel inverser: {}\n",p.display());
+}
 
 // #[no_mangle]
 // fn new_with_file(filename: &Path) -> Image{
